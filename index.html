@@ -1,0 +1,236 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Per noi</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600&display=swap" rel="stylesheet">
+
+<style>
+* {
+  -webkit-tap-highlight-color: transparent;
+  user-select: none;
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  background: #ffffff;
+  color: #d10000;
+  font-family: 'Playfair Display', serif;
+  height: 100vh;
+  overflow: hidden;
+}
+
+/* CUORI */
+.hearts {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+}
+
+.hearts span {
+  position: absolute;
+  color: #d10000;
+  opacity: 0.15;
+  font-size: 26px;
+  animation: floatHeart 6s ease-in-out infinite;
+  text-shadow: 0 0 6px rgba(209,0,0,0.6), 0 0 14px rgba(209,0,0,0.3);
+}
+
+@keyframes floatHeart {
+  0% { transform: translateY(0px); opacity: 0.1; }
+  50% { transform: translateY(-25px); opacity: 0.35; }
+  100% { transform: translateY(0px); opacity: 0.1; }
+}
+
+/* LOGIN */
+.login-box {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 300px;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+}
+
+input, button {
+  width: 100%;
+  padding: 12px;
+  border-radius: 8px;
+  border: 1px solid #d10000;
+  text-align: center;
+  font-family: 'Playfair Display', serif;
+  font-size: 16px;
+}
+
+button {
+  background: white;
+  color: #d10000;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+/* CONTENT */
+.content {
+  position: absolute;
+  inset: 0;
+  cursor: pointer;
+}
+
+/* TESTO */
+.text {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 90%;
+  max-width: 700px;
+  text-align: center;
+  font-size: 26px;
+  line-height: 1.6;
+}
+
+/* FINALE (più in alto) */
+.final {
+  position: absolute;
+  top: 30%; /* 👈 modificato */
+  left: 50%;
+  transform: translate(-50%, -50%);
+  font-size: 34px;
+  opacity: 0;
+  transition: opacity 1.5s ease;
+}
+
+.final.show {
+  opacity: 1;
+}
+
+/* FOTO */
+.funny {
+  position: absolute;
+  top: 65%;
+  left: 50%;
+  transform: translate(-50%, -50%) scale(0.9);
+  width: 70%;
+  max-width: 300px;
+  border-radius: 16px;
+  opacity: 0;
+  transition: all 1.5s ease;
+  box-shadow: 0 10px 40px rgba(0,0,0,0.3);
+}
+
+.funny.show {
+  opacity: 1;
+  transform: translate(-50%, -50%) scale(1);
+}
+
+.hidden { display: none; }
+
+#error {
+  color: #d10000;
+  display: none;
+}
+</style>
+</head>
+
+<body>
+
+<div class="hearts">
+  <span style="top:10%; left:15%;">♡</span>
+  <span style="top:20%; left:70%;">♡</span>
+  <span style="top:30%; left:40%;">♡</span>
+  <span style="top:50%; left:80%;">♡</span>
+  <span style="top:70%; left:20%;">♡</span>
+</div>
+
+<div class="login-box" id="login">
+  <h2>Accesso richiesto</h2>
+  <input type="password" id="password" placeholder="Password">
+  <button onclick="start()">Entra</button>
+  <p id="error">Password sbagliata</p>
+</div>
+
+<div class="content hidden" id="content">
+  <div id="text" class="text"></div>
+  <div id="final" class="final">Ti amo ❤️‍🩹</div>
+  <img id="funny" src="funny.jpg" class="funny">
+</div>
+
+<script>
+
+const texts = [
+"Ci avresti creduto se prima di fidanzarci ti avessero detto che avremmo fatto 6 mesi insieme?",
+"Io avrei risposto: 'Solo sei mesi?'. Perché con una come te puntare al minimo è un peccato.",
+"In questi 6 mesi abbiamo fatto un sacco di cose, ma la mia parte preferita rimane sempre la stessa: quando arriva la sera non vedo l'ora di vederti.",
+"Ogni giorno continuo a scegliere te, sempre.",
+"E la cosa più assurda",
+"è che ti voglio sempre di più.",
+"Se dovessi rifarlo, rifarei tutto esattamente uguale.",
+"E comunque, dopo 6 mesi, continuo a imbambolarmi ogni volta che sorridi, ti metti a ridere per nulla e mi guardi in quel modo"
+];
+
+let i = 0;
+let started = false;
+
+function typeWriter(text, el) {
+  el.innerHTML = "";
+  let index = 0;
+
+  function write() {
+    if (index < text.length) {
+      el.innerHTML = text.substring(0, index + 1);
+      index++;
+      setTimeout(write, 25);
+    }
+  }
+
+  write();
+}
+
+function start() {
+  const valid = ["29/10/2025","29-10-2025","29102025"];
+  const input = document.getElementById("password").value;
+
+  if(!valid.includes(input)) {
+    document.getElementById("error").style.display = "block";
+    return;
+  }
+
+  document.getElementById("login").style.display = "none";
+  document.getElementById("content").classList.remove("hidden");
+
+  started = true;
+  showText();
+}
+
+function showText() {
+  typeWriter(texts[i], document.getElementById("text"));
+}
+
+document.getElementById("content").addEventListener("click", function () {
+  if(!started) return;
+
+  if(i < texts.length - 1) {
+    i++;
+    showText();
+  } else {
+    document.getElementById("text").style.display = "none";
+
+    document.getElementById("final").classList.add("show");
+    document.getElementById("funny").classList.add("show");
+
+    started = false;
+  }
+});
+
+</script>
+
+</body>
+</html>
